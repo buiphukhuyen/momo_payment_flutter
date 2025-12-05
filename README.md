@@ -1,43 +1,46 @@
-# VNPAY Payment Flutter
+# MoMo Payment cho Flutter
 
-Plugin Flutter giúp tích hợp Cổng thanh toán VNPAY (Việt Nam) vào ứng dụng di động một cách dễ dàng. Thư viện này hỗ trợ tạo giao dịch thanh toán và xác minh chữ ký thông qua API của VNPAY.
+Plugin Flutter giúp tích hợp Cổng thanh toán MoMo (Việt Nam) vào ứng dụng di động của bạn một cách dễ dàng. Thư viện này hỗ trợ tạo giao dịch thanh toán và kiểm tra trạng thái giao dịch thông qua REST API của MoMo.
 
-## ✨ Tính năng
+## Tính năng
 
-- 🚀 **Tạo URL thanh toán**: Khởi tạo giao dịch thanh toán qua VNPAY với chữ ký HMAC-SHA512
-- 🔒 **Bảo mật**: Tự động tạo & xác minh `vnp_SecureHash` để đảm bảo tính toàn vẹn dữ liệu
-- ✅ **Xác minh phản hồi**: Kiểm tra chữ ký phản hồi từ VNPAY (Critical Security)
-- 📱 **Deeplink Support**: Tự động xử lý callback qua app_links khi người dùng quay lại app
-- 🎯 **Mã lỗi đầy đủ**: Bao gồm mô tả chi tiết tất cả 25+ mã lỗi từ VNPAY
-- 🇻🇳 **Hỗ trợ Tiếng Việt**: Tích hợp sẵn thông báo lỗi và mô tả bằng tiếng Việt
-- 🛠 **Chế độ Debug**: Dễ dàng gỡ lỗi với log chi tiết (Request/Response)
+*   🚀 **Tạo thanh toán (Create Payment)**: Khởi tạo giao dịch thanh toán qua Ứng dụng MoMo hoặc Web.
+*   🔍 **Kiểm tra trạng thái (Check Status)**: Xác minh trạng thái giao dịch (Thành công, Thất bại, Đang xử lý).
+*   🔗 **Hỗ trợ Deep Link**: Tự động mở ứng dụng MoMo và xử lý quay trở lại ứng dụng (callback) sau khi thanh toán.
+*   🛠 **Chế độ Debug**: Dễ dàng gỡ lỗi với log chi tiết (Request/Response).
+*   🇻🇳 **Hỗ trợ Tiếng Việt**: Tích hợp sẵn thông báo lỗi và mô tả bằng tiếng Việt.
 
-## 🔧 Chuẩn bị
+## Chuẩn bị
 
-Trước khi bắt đầu, bạn cần chuẩn bị tài khoản VNPAY và cài đặt Sandbox:
+Trước khi bắt đầu, bạn cần chuẩn bị tài khoản doanh nghiệp MoMo và cài đặt ứng dụng MoMo Test:
 
-1. **Đăng ký Merchant Account**: Truy cập [VNPAY Merchant Portal](https://sandbox.vnpayment.vn/merchantv2/Users/Login.htm) để đăng ký tài khoản và lấy `TMN Code`, `Hash Secret`
-2. **Cài đặt Sandbox**: Làm theo [Hướng dẫn Sandbox](https://sandbox.vnpayment.vn/apis/vnpay-demo/) để có hướng dẫn test chi tiết
+1.  **Đăng ký Hồ sơ doanh nghiệp**: Truy cập [MoMo Merchant Profile](https://developers.momo.vn/v3/vi/docs/payment/onboarding/merchant-profile) để đăng ký tài khoản và lấy `PartnerCode`, `AccessKey`, `SecretKey`.
+2.  **Cài đặt ứng dụng Test**: Làm theo [Hướng dẫn Test](https://developers.momo.vn/v3/vi/docs/payment/onboarding/test-instructions) để cài đặt ứng dụng MoMo phiên bản kiểm thử trên thiết bị của bạn.
 
-## 📦 Cài đặt
+## Cài đặt
 
 Chạy lệnh sau để cài đặt phiên bản mới nhất:
 
 ```bash
-flutter pub add vnpay_payment_flutter
+flutter pub add momo_payment_flutter
 ```
 
-Hoặc thêm thủ công vào file `pubspec.yaml`
+Hoặc thêm thủ công vào file `pubspec.yaml`:
 
-## ⚙️ Cấu hình
+```yaml
+dependencies:
+  momo_payment_flutter: ^1.0.2
+```
 
-Để xử lý việc quay trở lại ứng dụng từ VNPAY (Deep Link), bạn cần cấu hình cho Android và iOS.
+## Cấu hình
+
+Để xử lý việc quay trở lại ứng dụng từ MoMo (Deep Link), bạn cần cấu hình cho Android và iOS.
 
 ### Android
 
 Mở file `android/app/src/main/AndroidManifest.xml` và thực hiện 2 bước sau:
 
-1. **Thêm quyền truy vấn (Queries)**: Thêm thẻ `<queries>` vào **bên ngoài** thẻ `<application>` (cùng cấp với `<application>`).
+1.  **Thêm quyền truy vấn (Queries)**: Thêm thẻ `<queries>` vào **bên ngoài** thẻ `<application>` (cùng cấp với `<application>`). Điều này bắt buộc trên Android 11+ để mở được ứng dụng MoMo hoặc trình duyệt.
 
 ```xml
 <manifest ...>
@@ -47,6 +50,10 @@ Mở file `android/app/src/main/AndroidManifest.xml` và thực hiện 2 bước
             <action android:name="android.intent.action.VIEW" />
             <data android:scheme="https" />
         </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="momo" />
+        </intent>
     </queries>
 
     <application ...>
@@ -55,7 +62,7 @@ Mở file `android/app/src/main/AndroidManifest.xml` và thực hiện 2 bước
 </manifest>
 ```
 
-2. **Thêm Intent Filter**: Thêm vào bên trong thẻ `<activity>` của `MainActivity` để nhận kết quả trả về từ VNPAY.
+2.  **Thêm Intent Filter**: Thêm vào bên trong thẻ `<activity>` của `MainActivity` để nhận kết quả trả về từ MoMo.
 
 ```xml
 <manifest ...>
@@ -68,8 +75,8 @@ Mở file `android/app/src/main/AndroidManifest.xml` và thực hiện 2 bước
         <action android:name="android.intent.action.VIEW" />
         <category android:name="android.intent.category.DEFAULT" />
         <category android:name="android.intent.category.BROWSABLE" />
-        <!-- Thay thế "vnpaypayment" nếu cần -->
-        <data android:scheme="vnpaypayment" android:host="return" />
+        <!-- Thay thế "momopayment" bằng scheme bạn đã đăng ký với MoMo -->
+        <data android:scheme="momopayment" android:host="return" />
       </intent-filter>
 
     </activity>
@@ -85,58 +92,57 @@ Mở file `ios/Runner/Info.plist` và thêm cấu hình sau:
 <key>CFBundleURLTypes</key>
 <array>
   <dict>
+    <key>CFBundleTypeRole</key>
+    <string>Editor</string>
     <key>CFBundleURLName</key>
-    <string>vnpaypayment</string>
+    <string>momo_payment</string>
     <key>CFBundleURLSchemes</key>
     <array>
-      <!-- Thay thế "vnpaypayment" nếu cần -->
-      <string>vnpaypayment</string>
+      <!-- Thay thế "momopayment" bằng scheme bạn đã đăng ký với MoMo -->
+      <string>momopayment</string>
     </array>
   </dict>
 </array>
+<key>LSApplicationQueriesSchemes</key>
+<array>
+  <string>momo</string>
+</array>
 ```
 
-## 🎯 Hướng dẫn sử dụng
+## Hướng dẫn sử dụng
 
-### 1. Khởi tạo VNPAYPayment
+### 1. Khởi tạo MomoPayment
 
 ```dart
-import 'package:vnpay_payment_flutter/vnpay_payment_flutter.dart';
+import 'package:momo_payment_flutter/momo_payment_flutter.dart';
 
-// Khởi tạo với thông tin từ VNPAY Merchant Portal
-final vnpayPayment = VNPAYPayment(
-  tmnCode: "TMN_CODE_CỦA_BẠN",           // ⚠️ Thay bằng TMN Code của bạn
-  hashSecret: "HASH_SECRET_CỦA_BẠN...",  // ⚠️ Thay bằng Hash Secret của bạn
-  isSandbox: true,               // true: Test mode, false: Production
+final momoPayment = MomoPayment(
+  partnerCode: "MÃ_PARTNER_CỦA_BẠN",
+  accessKey: "ACCESS_KEY_CỦA_BẠN",
+  secretKey: "SECRET_KEY_CỦA_BẠN",
+  isTestMode: true, // Đặt là false khi chạy Production (Thực tế)
+  isDebug: true,    // Đặt là true để xem log chi tiết
 );
 ```
 
 ### 2. Tạo yêu cầu thanh toán
 
 ```dart
-import 'package:url_launcher/url_launcher.dart';
-
-final now = DateTime.now();
-final txnRef = 'ORD_${now.millisecondsSinceEpoch}'; // Mã đơn duy nhất
-
-// Tạo URL thanh toán với HMAC-SHA512 signature
-final paymentUrl = vnpayPayment.generatePaymentUrl(
-  txnRef: txnRef,                    // Mã đơn hàng (phải duy nhất)
-  amount: 100000,                    // Số tiền VND (chia hết cho 100)
-  orderInfo: 'Thanh toán đơn hàng #123456',
-  returnUrl: 'vnpaypayment://return', // ⚠️ Deeplink scheme (phải khớp config)
-  ipAddr: '192.168.1.1',             // IP khách hàng
-  orderType: 'billpayment', 
-  expireDate: now.add(Duration(minutes: 15)),
+final paymentInfo = MomoPaymentInfo(
+  orderId: "MÃ_ĐƠN_HÀNG_123456",
+  orderInfo: "Thanh toán đơn hàng #123456",
+  amount: 50000,
+  redirectUrl: "momopayment://return", // Phải khớp với Scheme đã cấu hình
+  ipnUrl: "https://your-server.com/ipn",
+  requestType: "captureWallet",
+  lang: "vi",
 );
 
 try {
-  if (await canLaunchUrl(Uri.parse(paymentUrl))) {
-    // Mở URL thanh toán trong trình duyệt
-    await launchUrl(
-      Uri.parse(paymentUrl),
-      mode: LaunchMode.externalApplication,
-    );
+  final response = await momoPayment.createPayment(paymentInfo);
+  if (response.payUrl != null) {
+    // Mở ứng dụng MoMo hoặc Web để thanh toán
+    await momoPayment.openPaymentPage(response.payUrl!);
   }
 } catch (e) {
   print("Lỗi thanh toán: $e");
@@ -148,99 +154,27 @@ try {
 Bạn nên kiểm tra trạng thái giao dịch khi người dùng quay lại ứng dụng (sử dụng `WidgetsBindingObserver` để phát hiện trạng thái `AppLifecycleState.resumed`).
 
 ```dart
-import 'package:app_links/app_links.dart';
+final response = await momoPayment.checkStatus(
+  orderId: "MÃ_ĐƠN_HÀNG_123456",
+  requestId: "REQUEST_ID_ĐÃ_DÙNG_KHI_TẠO_THANH_TOÁN",
+);
 
-class PaymentPage extends StatefulWidget {
-  @override
-  State<PaymentPage> createState() => _PaymentPageState();
-}
-
-class _PaymentPageState extends State<PaymentPage> with WidgetsBindingObserver {
-  late AppLinks _appLinks;
-  late VNPAYPayment vnpayPayment;
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addObserver(this);
-    _initAppLinks();
-  }
-
-  void _initAppLinks() {
-    _appLinks = AppLinks();
-  
-    // Lắng nghe deeplink khi app đang chạy
-    _appLinks.uriLinkStream.listen(
-      (uri) {
-        debugPrint('Deeplink received: $uri');
-        if (uri.scheme == 'vnpaypayment' && uri.host == 'return') {
-          _handlePaymentReturn(uri);
-        }
-      },
-      onError: (err) {
-        debugPrint('Deeplink error: $err');
-      },
-    );
-  }
-
-  void _handlePaymentReturn(Uri uri) {
-    final params = uri.queryParameters;
-  
-    // ⚠️ CRITICAL: Xác minh chữ ký (Bắt buộc để bảo vệ chống giả mạo)
-    // Nếu signature không hợp lệ => dữ liệu có thể bị tấn công
-    final isValid = vnpayPayment.verifyResponse(params);
-    if (!isValid) {
-      print('❌ Lỗi: Chữ ký không hợp lệ - Có thể dữ liệu bị giả mạo!');
-      return;
-    }
-
-    // Lấy thông tin chi tiết từ response code của VNPAY
-    final responseCode = VNPayResponseCode.getByCode(
-      params['vnp_ResponseCode'] ?? '99',
-    );
-
-    if (responseCode.isSuccess) {
-      print('✅ ${responseCode.message}');
-      // Tính số tiền (VNPAY gửi x100)
-      print('Số tiền: ${int.parse(params['vnp_Amount'] ?? '0') ~/ 100} VND');
-    } else {
-      print('❌ ${responseCode.message}');
-      print('Chi tiết: ${responseCode.description}');
-    }
-  }
-
-  @override
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    super.dispose();
-  }
+if (response.resultCode == 0) {
+  print("Thanh toán thành công!");
+} else {
+  print("Thanh toán thất bại: ${response.message}");
 }
 ```
 
-## 📝 Ví dụ
+## Ví dụ
 
 Xem thư mục `example` để tham khảo mã nguồn ứng dụng mẫu hoàn chỉnh.
-
-```bash
-cd example
-flutter run
-```
-
-Ứng dụng mẫu bao gồm:
-
-- Form nhập thông tin thanh toán
-- Khởi tạo giao dịch
-- Xử lý deeplink callback
-- Hiển thị chi tiết trạng thái giao dịch
 
 ## 🤝 Đóng góp
 
 Phát hiện lỗi hoặc có đề xuất? Vui lòng tạo issue hoặc pull request tại GitHub.
 
-## 📄 License
 
-MIT License - xem file [LICENSE](LICENSE)
+## Tuyên bố miễn trừ trách nhiệm
 
-## ⚖️ Tuyên bố miễn trừ trách nhiệm
-
-Gói thư viện này là một triển khai của bên thứ ba và không trực thuộc chính thức VNPAY. Vui lòng tham khảo [Tài liệu API VNPAY chính thức](https://sandbox.vnpayment.vn/apis/docs/thanh-toan-pay/pay.html) để biết thêm chi tiết.
+Gói thư viện này là một triển khai của bên thứ ba và không trực thuộc chính thức MoMo (M_Service). Vui lòng tham khảo [Tài liệu API MoMo chính thức](https://developers.momo.vn/) để biết thêm chi tiết.
