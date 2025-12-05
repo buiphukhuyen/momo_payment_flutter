@@ -19,17 +19,17 @@ Trước khi bắt đầu, bạn cần chuẩn bị tài khoản doanh nghiệp 
 
 ## Cài đặt
 
-Thêm `momo_payment_flutter` vào file `pubspec.yaml` của bạn:
+Chạy lệnh sau để cài đặt phiên bản mới nhất:
+
+```bash
+flutter pub add momo_payment_flutter
+```
+
+Hoặc thêm thủ công vào file `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  momo_payment_flutter: ^1.0.0
-```
-
-Chạy lệnh sau để tải thư viện:
-
-```bash
-flutter pub get
+  momo_payment_flutter: ^1.0.2
 ```
 
 ## Cấu hình
@@ -38,7 +38,31 @@ flutter pub get
 
 ### Android
 
-Mở file `android/app/src/main/AndroidManifest.xml` và thêm **Intent Filter** sau vào bên trong thẻ `<activity>` của `MainActivity`:
+Mở file `android/app/src/main/AndroidManifest.xml` và thực hiện 2 bước sau:
+
+1.  **Thêm quyền truy vấn (Queries)**: Thêm thẻ `<queries>` vào **bên ngoài** thẻ `<application>` (cùng cấp với `<application>`). Điều này bắt buộc trên Android 11+ để mở được ứng dụng MoMo hoặc trình duyệt.
+
+```xml
+<manifest ...>
+    <!-- Thêm đoạn này -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="https" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="momo" />
+        </intent>
+    </queries>
+
+    <application ...>
+       ...
+    </application>
+</manifest>
+```
+
+2.  **Thêm Intent Filter**: Thêm vào bên trong thẻ `<activity>` của `MainActivity` để nhận kết quả trả về từ MoMo.
 
 ```xml
 <manifest ...>

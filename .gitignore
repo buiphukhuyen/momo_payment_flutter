@@ -32,3 +32,6 @@ migrate_working_dir/
 
 # GitHub
 .github/
+
+# Test Project
+test_integration_app/

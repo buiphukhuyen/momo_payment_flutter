@@ -1,7 +1,7 @@
 name: momo_payment_flutter
 description: Plugin Flutter giúp tích hợp Cổng thanh toán MoMo (Việt Nam) vào ứng dụng di động. Hỗ trợ tạo thanh toán và kiểm tra trạng thái giao dịch qua REST API.
-version: 1.0.0
-homepage: https://github.com/buiphukhuyen/momo_payment
+version: 1.0.2
+homepage: https://github.com/buiphukhuyen/momo_payment_flutter
 
 environment:
   sdk: ^3.10.1

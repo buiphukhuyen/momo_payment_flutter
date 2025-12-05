@@ -1,3 +1,11 @@
+## 1.0.2
+
+* Cập nhật tài liệu hướng dẫn cấu hình Android (thêm `<queries>`).
+
+## 1.0.1
+
+* Cập nhật đường dẫn repository chính xác.
+
 ## 1.0.0
 
 * Phiên bản phát hành đầu tiên của momo_payment_flutter.
